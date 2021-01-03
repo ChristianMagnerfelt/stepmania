@@ -884,6 +884,55 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 			break;
 		}
+		case SORT_SINGLE_DIFFICULTY_METER:
+		case SORT_DOUBLE_DIFFICULTY_METER:
+		{
+			vector<Song *> arraySongs;
+			GetSongList(arraySongs, so);
+
+			// Count how many total steps in each difficulty meter category
+			map<uint32_t, uint32_t> sectionCounts;
+			for(const auto & SONG : arraySongs)
+			{
+				const auto & STEPS = SONG->GetAllSteps();
+				for(auto STEP : STEPS)
+				{
+					if((STEP->m_StepsType == StepsType::StepsType_pump_double && so == SORT_DOUBLE_DIFFICULTY_METER) || (STEP->m_StepsType == StepsType::StepsType_pump_single && so == SORT_SINGLE_DIFFICULTY_METER))
+					{
+						const auto METER = STEP->GetMeter();
+						++sectionCounts[METER];
+					}
+				}
+			}
+
+			uint32_t colorIDX = 0;
+			for(const auto & P : sectionCounts)
+			{
+				const RString SECTION_STR = ssprintf("%u", P.first);
+				const auto COLOR = SECTION_COLORS.GetValue(colorIDX);
+				colorIDX = (colorIDX + 1) % NUM_SECTION_COLORS;
+				arrayWheelItemDatas.push_back(new MusicWheelItemData(WheelItemDataType_Section, nullptr, SECTION_STR, nullptr, COLOR, P.second));
+
+				for(const auto & SONG : arraySongs)
+				{
+					const auto & STEPS = SONG->GetAllSteps();
+					for(auto STEP : STEPS)
+					{
+						if((STEP->m_StepsType == StepsType::StepsType_pump_double && so == SORT_DOUBLE_DIFFICULTY_METER) || (STEP->m_StepsType == StepsType::StepsType_pump_single && so == SORT_SINGLE_DIFFICULTY_METER))
+						{
+							const auto METER = STEP->GetMeter();
+							if(METER == P.first)
+							{
+								arrayWheelItemDatas.push_back(new MusicWheelItemData(WheelItemDataType_Song, SONG, SECTION_STR, nullptr, SONGMAN->GetSongColor(SONG), 0));
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			break;
+		}
 		default:
 			break;
 	}

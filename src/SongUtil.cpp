@@ -658,6 +658,14 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
+	case SORT_SINGLE_DIFFICULTY_METER:
+	{
+		return SORT_NOT_AVAILABLE.GetValue();
+	}
+	case SORT_DOUBLE_DIFFICULTY_METER:
+	{
+		return SORT_NOT_AVAILABLE.GetValue();
+	}
 	case SORT_MODE_MENU:
 		return RString();
 	case SORT_ALL_COURSES:
@@ -1017,8 +1025,15 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 		SongUtil::GetSteps( pSong, vOut, type );
 
 	StepsUtil::RemoveLockedSteps( pSong, vOut );
-	StepsUtil::SortNotesArrayByDifficulty( vOut );
-	StepsUtil::SortStepsByTypeAndDifficulty( vOut );
+
+	// Sort by type, if type is the same, sort by difficulty
+	stable_sort(vOut.begin(), vOut.end(), [](const Steps * LHS, const Steps * RHS)->bool
+	{
+			return (LHS->m_StepsType == RHS->m_StepsType) ? LHS->GetMeter() < RHS->GetMeter() : LHS->m_StepsType < RHS->m_StepsType;
+	});
+
+	//StepsUtil::SortNotesArrayByDifficulty( vOut );
+	//StepsUtil::SortStepsByTypeAndDifficulty( vOut );
 }
 
 bool SongUtil::IsStepsTypePlayable( Song *pSong, StepsType st )

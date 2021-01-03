@@ -437,18 +437,18 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 	// update judged row totals. Respect Combo segments here.
 	TimingData &td = *GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber]->GetTimingData();
 	ComboSegment *cs = td.GetComboSegmentAtRow(row);
-	if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
-	{
-		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetCombo();
-	}
-	else if (tns == TNS_CheckpointMiss || tns < m_MinScoreToMaintainCombo)
-	{
-		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetMissCombo();
-	}
-	else
-	{	
+	//if (tns == TNS_CheckpointHit || tns >= m_MinScoreToContinueCombo)
+	//{
+	//	m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetCombo();
+	//}
+	//else if (tns == TNS_CheckpointMiss || tns < m_MinScoreToMaintainCombo)
+	//{
+	//	m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetMissCombo();
+	//}
+	//else
+	//{	
 		m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
-	}
+	//}
 
 	// increment the current total possible dance score
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );

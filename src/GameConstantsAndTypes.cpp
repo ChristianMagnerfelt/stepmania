@@ -173,6 +173,8 @@ static const char *SortOrderNames[] = {
 	"DoubleMediumMeter",
 	"DoubleHardMeter",
 	"DoubleChallengeMeter",
+	"SingleDifficultyMeter",
+	"DoubleDifficultyMeter",
 	"ModeMenu",
 	"AllCourses",
 	"Nonstop",

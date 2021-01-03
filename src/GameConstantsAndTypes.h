@@ -174,6 +174,8 @@ enum SortOrder
 	SORT_DOUBLE_MEDIUM_METER, /**< Sort by the difficulty of the double medium meter. */
 	SORT_DOUBLE_HARD_METER, /**< Sort by the difficulty of the double hard meter. */
 	SORT_DOUBLE_CHALLENGE_METER, /**< Sort by the difficulty of the double challenge meter. */
+	SORT_SINGLE_DIFFICULTY_METER, /* Sort by diffuculty of all single meters */
+	SORT_DOUBLE_DIFFICULTY_METER, /* Sort by diffuculty of all single meters */
 	//
 	SORT_MODE_MENU, /**< Have access to the menu for choosing the sort. */
 	// course sorts

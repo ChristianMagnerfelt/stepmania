@@ -2801,7 +2801,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	/* Update hold checkpoints
 	 *
 	 * TODO: Move this to a separate function. */
-	if( m_bTickHolds && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
+	if( m_bTickHolds /*&& m_pPlayerState->m_PlayerController != PC_AUTOPLAY*/ )
 	{
 		// Few rows typically cross per update. Easier to check all crossed rows
 		// than to calculate from timing segments.
@@ -3109,13 +3109,24 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
+		// Set tap note offset to zero when not required to step on holds
+		auto tapNoteOffset = 0.0f;
+		if(!REQUIRE_STEP_ON_HOLD_HEADS && tn.type == TapNoteType::TapNoteType_HoldHead)
+		{
+			fTapNoteOffset = 0.0f;
+		}
+		else
+		{
+			tapNoteOffset = tn.result.fTapNoteOffset;
+		}
+
 		Message msg("Judgment");
 		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		msg.SetParam( "FirstTrack", iTrack );
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
-		msg.SetParam( "TapNoteOffset", tn.result.fTapNoteOffset );
+		msg.SetParam( "TapNoteOffset", tapNoteOffset);
 
 		Lua* L= LUA->Get();
 		lua_createtable( L, 0, m_NoteData.GetNumTracks() ); // TapNotes this row
