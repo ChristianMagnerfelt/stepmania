@@ -558,6 +558,29 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 	g_mapSongSortVal.clear();
 }
 
+int SongUtil::GetCurrentDifficultyMeter()
+{
+	if(GAMESTATE->m_pCurSteps[PLAYER_1] && GAMESTATE->m_pCurSteps[PLAYER_2])
+	{
+		const auto M_1 = GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
+		const auto M_2 = GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
+		const auto M = min(M_1, M_2);
+		return M;
+	}
+	else if(GAMESTATE->m_pCurSteps[PLAYER_1])
+	{
+		return GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
+	}
+	else if(GAMESTATE->m_pCurSteps[PLAYER_2])
+	{
+		return GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
 	if( pSong == nullptr )
@@ -659,12 +682,17 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_SINGLE_DIFFICULTY_METER:
-	{
-		return SORT_NOT_AVAILABLE.GetValue();
-	}
 	case SORT_DOUBLE_DIFFICULTY_METER:
 	{
-		return SORT_NOT_AVAILABLE.GetValue();
+		const auto M = GetCurrentDifficultyMeter();
+		if(M != 0)
+		{
+			return ssprintf("%02d", M);
+		}
+		else
+		{
+			return SORT_NOT_AVAILABLE.GetValue();
+		}
 	}
 	case SORT_MODE_MENU:
 		return RString();

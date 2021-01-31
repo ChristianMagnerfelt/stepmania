@@ -215,7 +215,7 @@ LuaDeclareType( SortOrder );
  *
  * This function is mainly used for saving sort order to the profile. -aj
  */
-inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER; }
+inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_DIFFICULTY_METER; }
 
 /** @brief The list of tap note scores available during play. */
 enum TapNoteScore { 

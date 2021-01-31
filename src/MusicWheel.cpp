@@ -328,13 +328,32 @@ bool MusicWheel::SelectSong( const Song *p )
 
 	unsigned i;
 	vector<MusicWheelItemData *> &from = getWheelItemsData(GAMESTATE->m_SortOrder);
-	for( i=0; i<from.size(); i++ )
+
+	if((GAMESTATE->m_SortOrder == SortOrder::SORT_SINGLE_DIFFICULTY_METER || GAMESTATE->m_SortOrder == SortOrder::SORT_DOUBLE_DIFFICULTY_METER) && SongUtil::GetCurrentDifficultyMeter() > 0)
 	{
-		if( from[i]->m_pSong == p )
+		const auto M = SongUtil::GetCurrentDifficultyMeter();
+		const auto M_STR = ssprintf("%02d", M);
+
+		for(i = 0; i < from.size(); i++)
 		{
-			// make its group the currently expanded group
-			SetOpenSection( from[i]->m_sText );
-			break;
+			if(from[i]->m_pSong == p && from[i]->m_sText == M_STR)
+			{
+				// make its group the currently expanded group
+				SetOpenSection(from[i]->m_sText);
+				break;
+			}
+		}
+	}
+	else
+	{
+		for(i = 0; i < from.size(); i++)
+		{
+			if(from[i]->m_pSong == p)
+			{
+				// make its group the currently expanded group
+				SetOpenSection(from[i]->m_sText);
+				break;
+			}
 		}
 	}
 

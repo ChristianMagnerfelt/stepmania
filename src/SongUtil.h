@@ -150,6 +150,9 @@ namespace SongUtil
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 
+	// USed for difficulty sort, returns the current difficulty meter for the currently selected step. If there are two players then the lowest diffculty meter will be selected
+	int GetCurrentDifficultyMeter();
+
 	/**
 	 * @brief Determine if the requested description for an edit is unique.
 	 * @param pSong the song the edit is for.
