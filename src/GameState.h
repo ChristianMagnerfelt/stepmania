@@ -258,6 +258,9 @@ public:
 	Course*		m_pPreferredCourse;
 	BroadcastOnChangePtr1D<Trail,NUM_PLAYERS>	m_pCurTrail;
 
+
+	int m_currentDifficultySortMeter = 0;
+
 	bool		m_bBackedOutOfFinalStage;
 
 	// Music statistics:

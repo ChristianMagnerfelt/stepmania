@@ -1629,33 +1629,73 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		FOREACH_HumanPlayer( pn )
 		{
 			// Find the closest match to the user's preferred difficulty and StepsType.
-			int iCurDifference = -1;
+			//int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			int i = 0;
-			for (Steps *s : m_vpSteps)
+
+			bool foundStepsFlag = false;
 			{
-				// If the current steps are listed, use them.
-				if( GAMESTATE->m_pCurSteps[pn] == s )
+				int i = 0;
+				for(Steps * s : m_vpSteps)
 				{
-					iSelection = i;
-					break;
-				}
-
-				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
-				{
-					int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
-					int iStepsTypeDifference = 0;
-					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
-						iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
-					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
-
-					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
+					// If the current steps are listed, use them.
+					if(GAMESTATE->m_pCurSteps[pn] == s)
 					{
 						iSelection = i;
-						iCurDifference = iTotalDifference;
+						foundStepsFlag = true;
+						break;
+					}
+
+					//if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
+					//{
+					//	int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
+					//	int iStepsTypeDifference = 0;
+					//	if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
+					//		iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
+					//	int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
+
+					//	if( iCurDifference == -1 || iTotalDifference < iCurDifference )
+					//	{
+					//		iSelection = i;
+					//		iCurDifference = iTotalDifference;
+					//	}
+					//}
+					i += 1;
+				}
+			}
+
+			if(!foundStepsFlag)
+			{
+				if((GAMESTATE->m_SortOrder == SortOrder::SORT_SINGLE_DIFFICULTY_METER || GAMESTATE->m_SortOrder == SortOrder::SORT_DOUBLE_DIFFICULTY_METER))
+				{
+					int i = 0;
+					for(Steps * s : m_vpSteps)
+					{
+						if(s->GetMeter() >= GAMESTATE->m_currentDifficultySortMeter)
+						{
+							iSelection = i;
+							break;
+						}
+						++i;
 					}
 				}
-				i += 1;
+				else
+				{
+					if(GAMESTATE->m_pCurSteps[pn])
+					{
+						int i = 0;
+						int minDiff = std::numeric_limits<int>::max();
+						for(Steps * s : m_vpSteps)
+						{
+							const auto DIFF = std::abs(s->GetMeter() - GAMESTATE->m_pCurSteps[pn]->GetMeter());
+							if(DIFF < minDiff)
+							{
+								minDiff = DIFF;
+								iSelection = i;
+							}
+							++i;
+						}
+					}
+				}
 			}
 
 			CLAMP( iSelection, 0, m_vpSteps.size()-1 );

@@ -3046,23 +3046,58 @@ bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 
 unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td )
 {
+	
+
+
 	unsigned int ret = 0;
 	// Last row must be included. -- Matt
 	int end = nd->GetLastRow()+1;
-	vector<TimingSegment*> segments = td->GetTimingSegments( SEGMENT_TICKCOUNT );
+	vector<TimingSegment*> tickCountSegments = td->GetTimingSegments( SEGMENT_TICKCOUNT );
+	vector<TimingSegment *> warpSegments = td->GetTimingSegments(SEGMENT_WARP);
+	vector<TimingSegment *> fakeSegments = td->GetTimingSegments(SEGMENT_FAKE);
 	// We start with the LAST TimingSegment and work our way backwards.
 	// This way we can continually update end instead of having to lookup when
 	// the next segment starts.
-	for(int i = segments.size() - 1; i >= 0; i--)
+	for(int i = tickCountSegments.size() - 1; i >= 0; i--)
 	{
-		TickcountSegment *ts = (TickcountSegment*) segments[i];
+		TickcountSegment *ts = (TickcountSegment*)tickCountSegments[i];
 		if( ts->GetTicks() > 0)
 		{
 			// Jump to each point where holds would tick and add the number of holds there to ret.
-			for(int j = ts->GetRow(); j < end; j += ROWS_PER_BEAT / ts->GetTicks() )
+			for(int j = ts->GetRow(); j < end; j += ROWS_PER_BEAT / ts->GetTicks())
+			{
+				bool skipFlag = false;
+				for(auto segment : warpSegments)
+				{
+					auto * warpSegment = reinterpret_cast<WarpSegment *>(segment);
+					const auto START = warpSegment->GetRow();
+					const auto END = START + warpSegment->GetLengthRows();
+					if(j >= START && j < END)
+					{
+						skipFlag = true;
+						break;
+					}
+				}
+
+				for(auto segment : fakeSegments)
+				{
+					auto * warpSegment = reinterpret_cast<FakeSegment *>(segment);
+					const auto START = warpSegment->GetRow();
+					const auto END = START + warpSegment->GetLengthRows();
+					if(j >= START && j < END)
+					{
+						skipFlag = true;
+						break;
+					}
+				}
+
+
+				if(skipFlag) continue;
+
 				// 1 tick per row.
-				if( nd->GetNumTracksHeldAtRow(j) > 0 )
+				if(nd->GetNumTracksHeldAtRow(j) > 0)
 					ret++;
+			}
 		}
 		end = ts->GetRow();
 	}

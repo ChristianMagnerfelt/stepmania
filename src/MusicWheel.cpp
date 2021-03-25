@@ -1453,6 +1453,11 @@ void MusicWheel::SetOpenSection( RString group )
 	m_sExpandedSectionName = group;
 	GAMESTATE->sExpandedSectionName = group;
 
+	if((GAMESTATE->m_SortOrder == SortOrder::SORT_SINGLE_DIFFICULTY_METER || GAMESTATE->m_SortOrder == SortOrder::SORT_DOUBLE_DIFFICULTY_METER))
+	{
+		GAMESTATE->m_currentDifficultySortMeter = std::atoi(group.c_str());
+	}
+
 	// wheel positions = num song groups
 	if ( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
 		m_viWheelPositions.resize( SONGMAN->GetNumSongGroups() );

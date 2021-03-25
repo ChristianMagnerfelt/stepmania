@@ -560,24 +560,26 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 
 int SongUtil::GetCurrentDifficultyMeter()
 {
-	if(GAMESTATE->m_pCurSteps[PLAYER_1] && GAMESTATE->m_pCurSteps[PLAYER_2])
+	if(GAMESTATE->m_currentDifficultySortMeter == 0)
 	{
-		const auto M_1 = GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
-		const auto M_2 = GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
-		const auto M = min(M_1, M_2);
-		return M;
-	}
-	else if(GAMESTATE->m_pCurSteps[PLAYER_1])
-	{
-		return GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
-	}
-	else if(GAMESTATE->m_pCurSteps[PLAYER_2])
-	{
-		return GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
+		if(GAMESTATE->m_pCurSteps[PLAYER_1] && GAMESTATE->m_pCurSteps[PLAYER_2])
+		{
+			const auto M_1 = GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
+			const auto M_2 = GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
+			GAMESTATE->m_currentDifficultySortMeter = min(M_1, M_2);
+		}
+		else if(GAMESTATE->m_pCurSteps[PLAYER_1])
+		{
+			GAMESTATE->m_currentDifficultySortMeter = GAMESTATE->m_pCurSteps[PLAYER_1]->GetMeter();
+		}
+		else if(GAMESTATE->m_pCurSteps[PLAYER_2])
+		{
+			GAMESTATE->m_currentDifficultySortMeter = GAMESTATE->m_pCurSteps[PLAYER_2]->GetMeter();
+		}
 	}
 	else
 	{
-		return 0;
+		return GAMESTATE->m_currentDifficultySortMeter;
 	}
 }
 
