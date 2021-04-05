@@ -240,8 +240,8 @@ void MusicWheel::BeginScreen()
 			{
 				SongUtil::GetPlayableSteps(GAMESTATE->m_pCurSong, vpPossibleSteps);
 			}
-			bool bStepsIsPossible = find(vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p]) == vpPossibleSteps.end();
-			if(!bStepsIsPossible)
+			const auto IT = find(vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p]);
+			if(IT == vpPossibleSteps.end())
 			{
 				GAMESTATE->m_pCurSteps[p].Set(nullptr);
 			}

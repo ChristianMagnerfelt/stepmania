@@ -346,12 +346,19 @@ void MusicWheelItem::RefreshGrades()
 
 		Profile *pProfile = PROFILEMAN->GetProfile(ps);
 
+		int32_t meter = 0;
+		if(GAMESTATE->m_pCurSteps[p])
+		{
+			meter = GAMESTATE->m_pCurSteps[p]->GetMeter();
+		}
+
 		HighScoreList *pHSL = nullptr;
 		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
 			if( pWID->m_pSong )
 			{
-				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
+				//const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
+				const Steps * pSteps = SongUtil::GetStepsByMeter(pWID->m_pSong, st, meter, meter);
 				if( pSteps != nullptr )
 					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
